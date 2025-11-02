@@ -12,7 +12,7 @@ language = "python3"
 requiredFiles = [".replit", "replit.nix"]
 
 [deployment]
-run = ["python3", "main.py"]
+run = ["python3 main.py"]
 deploymentTarget = "cloudrun"
 
 [agent]
@@ -44,3 +44,9 @@ outputType = "console"
 [[ports]]
 localPort = 8080
 externalPort = 80
+
+[env]
+PORT = "8080"
+
+[unit]
+command = ["python3", "main.py"]
