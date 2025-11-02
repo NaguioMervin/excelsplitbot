@@ -39,7 +39,6 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
         start = i * rows_per_file
         end = min(start + rows_per_file, total_rows)
         part_df = df.iloc[start:end]
-        part_df["Batch Label"] = f"Batch V{i+1}"
         out_name = f"{base_name}_V{i+1}.xlsx"
         part_df.to_excel(out_name, index=False)
         await update.message.reply_document(document=open(out_name, "rb"))
