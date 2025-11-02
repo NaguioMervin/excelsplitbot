@@ -16,8 +16,34 @@ if not os.path.exists("uploads"):
 # --- /start command ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 Hi! Send me an Excel file (.xlsx) and I'll split it into 2,500-row chunks."
+        "👋 Hi! Send me an Excel file (.xlsx) and I'll split it for you.\n\n"
+        "📊 Default: 2,500 rows per file\n"
+        "⚙️ Change it: Use /setrows <number>\n"
+        "Example: /setrows 5000"
     )
+
+
+# --- Set rows per file ---
+async def setrows(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args or len(context.args) == 0:
+        current = context.user_data.get('rows_per_file', 2500)
+        await update.message.reply_text(
+            f"📊 Current setting: {current} rows per file\n\n"
+            f"To change it, use: /setrows <number>\n"
+            f"Example: /setrows 5000"
+        )
+        return
+    
+    try:
+        rows = int(context.args[0])
+        if rows < 1:
+            await update.message.reply_text("❌ Please enter a number greater than 0")
+            return
+        
+        context.user_data['rows_per_file'] = rows
+        await update.message.reply_text(f"✅ Set to {rows} rows per file!")
+    except ValueError:
+        await update.message.reply_text("❌ Please enter a valid number\nExample: /setrows 5000")
 
 
 # --- Handle Excel uploads ---
@@ -29,7 +55,7 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("📥 File received. Processing...")
 
     # --- Split Excel file ---
-    rows_per_file = 2500
+    rows_per_file = context.user_data.get('rows_per_file', 2500)
     df = pd.read_excel(file_path, dtype=str, engine="openpyxl")
     total_rows = len(df)
     num_files = math.ceil(total_rows / rows_per_file)
@@ -58,6 +84,7 @@ async def clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- Start bot ---
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("setrows", setrows))
 app.add_handler(CommandHandler("clear", clear))
 app.add_handler(
     MessageHandler(filters.Document.FileExtension("xlsx"), handle_file))
