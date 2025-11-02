@@ -1,3 +1,4 @@
+from keep_alive import keep_alive
 import os
 import pandas as pd
 from telegram import Update
@@ -63,4 +64,6 @@ app.add_handler(
     MessageHandler(filters.Document.FileExtension("xlsx"), handle_file))
 
 print("✅ Bot is running...")
+keep_alive()
 app.run_polling()
+
