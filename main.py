@@ -28,7 +28,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "You can choose what I should do:\n"
         "1️⃣ /split - Split Excel into smaller parts\n"
         "2️⃣ /merge - Merge multiple Excel files\n"
-        "3️⃣ /compare - Compare two Excel files\n"
+        "3️⃣ /compare - Compare two Excel files for data verification\n"
         "4️⃣ /clear - Clear uploaded temporary files")
 
 
